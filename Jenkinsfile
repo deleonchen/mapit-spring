@@ -15,7 +15,7 @@ pipeline {
   }
   properties([
     parameters([
-      string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
+      string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat'),
       string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
     ])
   ])
