@@ -8,58 +8,54 @@ pipeline {
     // GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
     MY_ORI_GIT = "${env.GIT_BRANCH}"
     // MY_NEW_GIT = MY_ORI_GIT.substring(7)
-    MY_NEW_GIT = 'MYD-7'		
+    MY_NEW_GIT = 'MYD-7'
 
   }
   stages {
-      stage('Update Jira#0 with GitBranch') {
-     //  when {
-     //     not {
-     //       branch 'master'
-     //     }
-     //  }
-      steps {
-        script {
-		  
-		 //  echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-		// echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
-		// echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
-		
-	           response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
-        
+    stage('Update Jira#0 with GitBranch') {
+      when {
+        not {
+          branch 'master'
         }
-
       }
-    }
-	  
-     stage('Update Jira#1 with GitBranch') {
-
       steps {
         script {
-		 // MY_ORI_GIT = ${GIT_BRANCH}
-		// origin/
-		 // MY_NEW_GIT = MY_ORI_GIT.substring(7)
-		// echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-	        // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
-		
-		def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
-                
-		if (issue.code.toString() == '200') {
-                     response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
-                } else {
-                       def issueInfo = [fields: [ project: [key: 'MYD'],
-                       summary: "Review build ${MY_NEW_GIT} ",
-                       description: 'Review changes for build ${MY_NEW_GIT}',
-                       issuetype: [name: 'Task']]]
-                        response = jiraNewIssue issue: issueInfo, site: 'MyJenkins'
-               }
+
+          echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
+	  echo "Env GIT_BRANCH :" +  "${env.GIT_BRANCH}"
+          // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
+          // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
+          response = jiraAddComment site: 'MyJenkins',
+          idOrKey: "${MY_NEW_GIT}",
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
 
         }
 
       }
     }
-	  
-	  
+
+    //stage('Update Jira#1 with GitBranch') {
+    // steps {
+    // script {
+    // MY_ORI_GIT = ${GIT_BRANCH}
+    // origin/
+    // MY_NEW_GIT = MY_ORI_GIT.substring(7)
+    // echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
+    // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
+    //def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
+    //if (issue.code.toString() == '200') {
+    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
+    //} else {
+    //def issueInfo = [fields: [ project: [key: 'MYD'],
+    //summary: "Review build ${MY_NEW_GIT} ",
+    //description: 'Review changes for build ${MY_NEW_GIT}',
+    //issuetype: [name: 'Task']]]
+    //response = jiraNewIssue issue: issueInfo, site: 'MyJenkins'
+    //}
+    //}
+    //}
+    //}
+
     stage('Echoing valuesp') {
       steps {
         script {
@@ -257,11 +253,13 @@ pipeline {
 
       steps {
         script {
-          response = jiraAddComment site: 'MyJenkins', idOrKey: 'MYD-7',  comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build UL - ${BUILD_URL}"
+          response = jiraAddComment site: 'MyJenkins',
+          idOrKey: 'MYD-7',
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build UL - ${BUILD_URL}"
         }
 
       }
     }
-	
-  } 
-}	
+
+  }
+}
