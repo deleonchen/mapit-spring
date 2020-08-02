@@ -1,8 +1,10 @@
+
 pipeline {
   agent {
     label 'maven'
   }
 
+  
   environment {
     DEPLOY_NS = "${env.DEPLOY_NS}"
     // GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
@@ -11,6 +13,13 @@ pipeline {
     MY_NEW_GIT = 'MYD-7'
 
   }
+  properties([
+    parameters([
+      string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
+      string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
+    ])
+  ])
+
   stages {
     stage('Update Jira#0 with GitBranch') {
       when {
@@ -23,7 +32,7 @@ pipeline {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
 	  echo "Env GIT_BRANCH :" +  "${env.GIT_BRANCH}"
-          // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
+	  // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
           // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: "${MY_NEW_GIT}",
@@ -60,7 +69,8 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
+            echo "CUSTOM PARAM 1:[" + params.CUSTOM_PARAM_1 + "]"
+	    echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
             echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
             echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
 
