@@ -7,6 +7,7 @@ pipeline {
   parameters {
     string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
     string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
+	  
   }
   
   /**environment {
@@ -28,7 +29,6 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-
           echo "DEPLOY_NS : " + "${params.DEPLOY_NS}"
 
           response = jiraAddComment site: 'MyJenkins',
