@@ -50,7 +50,7 @@ pipeline {
     // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
     //def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
     //if (issue.code.toString() == '200') {
-    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
+    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${params.DEPLOY_NS}"
     //} else {
     //def issueInfo = [fields: [ project: [key: 'MYD'],
     //summary: "Review build ${MY_NEW_GIT} ",
