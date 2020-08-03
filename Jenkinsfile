@@ -14,7 +14,7 @@ pipeline {
   }
   
   parameters {
-    string(name: 'SERVER_ID', defaultValue: 'jfrod-dl', description: 'Artifactory server definition')
+    string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
     string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
     string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
   }
