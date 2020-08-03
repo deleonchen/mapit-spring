@@ -3,22 +3,19 @@ pipeline {
   agent {
     label 'maven'
   }
-
-  
-  environment {
-    DEPLOY_NS = "${env.DEPLOY_NS}"
-    // GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
-    MY_ORI_GIT = "${env.GIT_BRANCH}"
-    // MY_NEW_GIT = MY_ORI_GIT.substring(7)
-    MY_NEW_GIT = 'MYD-7'
-
+	
+  parameters {
+    string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
+    string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
   }
-  properties([
-    parameters([
-      string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat'),
-      string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
-    ])
-  ])
+  
+  /**environment {
+    //GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
+    //MY_ORI_GIT = "${env.GIT_BRANCH}"
+    //MY_NEW_GIT = MY_ORI_GIT.substring(7)
+    //MY_NEW_GIT = 'MYD-7'
+  }**/  
+
 
   stages {
     stage('Update Jira#0 with GitBranch') {
@@ -31,12 +28,14 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-	  echo "Env GIT_BRANCH :" +  "${env.GIT_BRANCH}"
-	  // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
-          // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
+	  
+	  // echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"   // works - all these methods of referencing the param works
+	  // echo "DEPLOY_NS params: " + params.DEPLOY_NS  // works 
+          echo "DEPLOY_NS : " + "${DEPLOY_NS}"
+
           response = jiraAddComment site: 'MyJenkins',
-          idOrKey: "${MY_NEW_GIT}",
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
+          idOrKey: "${GIT_BRANCH}",
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace: ${DEPLOY_NS}"
 
         }
 
@@ -53,7 +52,7 @@ pipeline {
     // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
     //def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
     //if (issue.code.toString() == '200') {
-    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
+    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
     //} else {
     //def issueInfo = [fields: [ project: [key: 'MYD'],
     //summary: "Review build ${MY_NEW_GIT} ",
@@ -65,14 +64,14 @@ pipeline {
     //}
     //}
 
-    stage('Echoing valuesp') {
+    stage('Echoing values') {
       steps {
         script {
           openshift.withCluster() {
-            echo "CUSTOM PARAM 1:[" + params.CUSTOM_PARAM_1 + "]"
-	    echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
-            echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
-            echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
+	    echo "DEPLOY_NS :[" + "${DEPLOY_NS}" + "]"
+	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
+            echo "Selector Project result on namespace - ${DEPLOY_NS}:[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
+            echo "Selector Namespace result on namespace - ${DEPLOY_NS}:[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
 
           }
         }
@@ -99,14 +98,20 @@ pipeline {
 
     stage('Artifactory configuration') {
       steps {
-        rtServer(
-        id: "ARTIFACTORY_SERVER", url: "${env.ARTIFACTORY_SERVER_ID}", credentialsId: "jfrog-credentials")
+        //rtServer(
+        //id: "ARTIFACTORY_SERVER", url: "${env.ARTIFACTORY_SERVER_ID}", credentialsId: "jfrog-credentials")
 
-        rtMavenDeployer(
-        id: "MAVEN_DEPLOYER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+        //rtMavenDeployer(
+        //id: "MAVEN_DEPLOYER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+
+        //rtMavenResolver(
+        //id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+	
+	rtMavenDeployer(
+        id: "MAVEN_DEPLOYER", serverId: SERVER_ID, releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
 
         rtMavenResolver(
-        id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+        id: "MAVEN_RESOLVER", serverId: SERVER_ID, releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
       }
     }
 
@@ -265,7 +270,7 @@ pipeline {
         script {
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: 'MYD-7',
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build UL - ${BUILD_URL}"
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
         }
 
       }
