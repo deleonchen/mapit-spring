@@ -28,10 +28,11 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
+		
 	  
 	  // echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"   // works - all these methods of referencing the param works
 	  // echo "DEPLOY_NS params: " + params.DEPLOY_NS  // works 
-          echo "DEPLOY_NS : " + "${DEPLOY_NS}"
+          echo "DEPLOY_NS : " + "${params.DEPLOY_NS}"
 
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: "${GIT_BRANCH}",
