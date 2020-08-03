@@ -28,15 +28,12 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-		
-	  
-	  // echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"   // works - all these methods of referencing the param works
-	  // echo "DEPLOY_NS params: " + params.DEPLOY_NS  // works 
+
           echo "DEPLOY_NS : " + "${params.DEPLOY_NS}"
 
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: "${GIT_BRANCH}",
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace: ${DEPLOY_NS}"
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace: ${params.DEPLOY_NS}"
 
         }
 
@@ -53,7 +50,7 @@ pipeline {
     // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
     //def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
     //if (issue.code.toString() == '200') {
-    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
+    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${params.DEPLOY_NS}"
     //} else {
     //def issueInfo = [fields: [ project: [key: 'MYD'],
     //summary: "Review build ${MY_NEW_GIT} ",
@@ -69,10 +66,10 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-	    echo "DEPLOY_NS :[" + "${DEPLOY_NS}" + "]"
+	    echo "DEPLOY_NS :[" + "${params.DEPLOY_NS}" + "]"
 	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
-            echo "Selector Project result on namespace - ${DEPLOY_NS}:[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
-            echo "Selector Namespace result on namespace - ${DEPLOY_NS}:[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
+            echo "Selector Project result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('project', "${params.DEPLOY_NS}").exists() + "]"
+            echo "Selector Namespace result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('ns', "${params.DEPLOY_NS}").exists() + "]"
 
           }
         }
@@ -83,7 +80,7 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            return openshift.selector('project', "${DEPLOY_NS}").exists()
+            return openshift.selector('project', "${params.DEPLOY_NS}").exists()
           }
         }
       }
@@ -91,7 +88,7 @@ pipeline {
         script {
           openshift.withCluster() {
             echo "Deleting the project"
-            openshift.raw("delete project ${DEPLOY_NS}")
+            openshift.raw("delete project ${params.DEPLOY_NS}")
           }
         }
       }
@@ -157,7 +154,7 @@ pipeline {
 
             try {
 	      echo "Trying to create project..."
-	      openshift.newProject("${DEPLOY_NS}")
+	      openshift.newProject("${params.DEPLOY_NS}")
             } catch(e) {
               // The exception is a hudson.AbortException with details
               // about the failure.
@@ -174,7 +171,7 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               return ! openshift.selector("bc", "mapit").exists();
             }
           }
@@ -183,7 +180,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.newBuild("--name=mapit", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
             }
           }
@@ -194,7 +191,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.selector("bc", "mapit").startBuild("--from-file=target/mapit-spring.jar", "--wait")
             }
           }
@@ -205,7 +202,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.tag("mapit:latest", "mapit:dev")
             }
           }
@@ -216,7 +213,7 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               return ! openshift.selector('dc', 'mapit-dev').exists()
             }
           }
@@ -225,7 +222,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.newApp("mapit:latest", "--name=mapit-dev").narrow('svc').expose()
             }
           }
@@ -236,7 +233,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.tag("mapit:dev", "mapit:stage")
             }
           }
@@ -247,7 +244,7 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               return ! openshift.selector('dc', 'mapit-stage').exists()
             }
           }
@@ -256,7 +253,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEPLOY_NS}") {
+            openshift.withProject("${params.DEPLOY_NS}") {
               openshift.newApp("mapit:stage", "--name=mapit-stage").narrow('svc').expose()
             }
           }
