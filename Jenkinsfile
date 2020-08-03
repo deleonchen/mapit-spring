@@ -66,8 +66,8 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-	    echo "DEPLOY_NS :[" + "${params.DEPLOY_NS}" + "]"
-	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
+	    echo "DEPLOY_NS :[ ${params.DEPLOY_NS} ]"
+            echo "SERVER_ID :[ ${params.SERVER_ID} ]"
             echo "Selector Project result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('project', "${params.DEPLOY_NS}").exists() + "]"
             echo "Selector Namespace result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('ns', "${params.DEPLOY_NS}").exists() + "]"
 
@@ -106,10 +106,10 @@ pipeline {
         //id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
 	
 	rtMavenDeployer(
-        id: "MAVEN_DEPLOYER", serverId: SERVER_ID, releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+		id: "MAVEN_DEPLOYER", serverId: ${params.SERVER_ID}, releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
 
         rtMavenResolver(
-        id: "MAVEN_RESOLVER", serverId: SERVER_ID, releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+		id: "MAVEN_RESOLVER", serverId: ${params.SERVER_ID}, releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
       }
     }
 
