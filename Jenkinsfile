@@ -11,7 +11,7 @@ pipeline {
   
   environment {
     // set as env var
-    DEPLOY_NS = params.SERVER_ID
+    DEPLOY_NS = "params.SERVER_ID"
     //GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
     //MY_ORI_GIT = "${env.GIT_BRANCH}"
     //MY_NEW_GIT = MY_ORI_GIT.substring(7)
