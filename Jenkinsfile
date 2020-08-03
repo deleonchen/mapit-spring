@@ -3,7 +3,6 @@ pipeline {
   agent {
     label 'maven'
   }
-
   
   environment {
     DEPLOY_NS = "${env.DEPLOY_NS}"
