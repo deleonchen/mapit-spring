@@ -70,7 +70,7 @@ pipeline {
           openshift.withCluster() {
             echo "CUSTOM PARAM 1:[" + params.CUSTOM_PARAM_1 + "]"
 	    echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
-	    echo "SERVER_ID :[" + SERVER_ID + "]"
+	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
             echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
             echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
 
@@ -99,14 +99,20 @@ pipeline {
 
     stage('Artifactory configuration') {
       steps {
-        rtServer(
-        id: "ARTIFACTORY_SERVER", url: "${env.ARTIFACTORY_SERVER_ID}", credentialsId: "jfrog-credentials")
+        //rtServer(
+        //id: "ARTIFACTORY_SERVER", url: "${env.ARTIFACTORY_SERVER_ID}", credentialsId: "jfrog-credentials")
 
-        rtMavenDeployer(
-        id: "MAVEN_DEPLOYER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+        //rtMavenDeployer(
+        //id: "MAVEN_DEPLOYER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+
+        //rtMavenResolver(
+        //id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+	
+	rtMavenDeployer(
+        id: "MAVEN_DEPLOYER", serverId: SERVER_ID, releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
 
         rtMavenResolver(
-        id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+        id: "MAVEN_RESOLVER", serverId: SERVER_ID, releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
       }
     }
 
