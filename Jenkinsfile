@@ -12,12 +12,11 @@ pipeline {
     MY_NEW_GIT = 'MYD-7'
 
   }
-  options([
-    parameters([
-      string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat'),
-      string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
-    ])
-  ])
+  
+  parameters {
+    string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
+    string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
+  }
 
   stages {
     stage('Update Jira#0 with GitBranch') {
