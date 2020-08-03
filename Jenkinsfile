@@ -14,8 +14,7 @@ pipeline {
     //MY_ORI_GIT = "${env.GIT_BRANCH}"
     //MY_NEW_GIT = MY_ORI_GIT.substring(7)
     //MY_NEW_GIT = 'MYD-7'
-  }**/
-  
+  }**/  
 
 
   stages {
@@ -29,15 +28,14 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-	  echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"
-	  echo "DEPLOY_NS params: " + params.DEPLOY_NS
+	  
+	  // echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"   // works - all these methods of referencing the param works
+	  // echo "DEPLOY_NS params: " + params.DEPLOY_NS  // works 
           echo "DEPLOY_NS : " + "${DEPLOY_NS}"
-	  // echo "Env GIT_BRANCH :" +  "${env.GIT_BRANCH}"
-	  // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
-          // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
+
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: "${GIT_BRANCH}",
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace: ${DEPLOY_NS}"
 
         }
 
@@ -66,14 +64,14 @@ pipeline {
     //}
     //}
 
-    stage('Echoing valuesp') {
+    stage('Echoing values') {
       steps {
         script {
           openshift.withCluster() {
 	    echo "DEPLOY_NS :[" + "${DEPLOY_NS}" + "]"
 	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
-            echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
-            echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
+            echo "Selector Project result on namespace - ${DEPLOY_NS}:[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
+            echo "Selector Namespace result on namespace - ${DEPLOY_NS}:[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
 
           }
         }
@@ -272,7 +270,7 @@ pipeline {
         script {
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: 'MYD-7',
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build UL - ${BUILD_URL}"
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
         }
 
       }
