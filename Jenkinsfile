@@ -155,14 +155,12 @@ pipeline {
           openshift.withCluster() {
 
             try {
-              // openshift.withCredentials('Jenkins01-token') {
-              openshift.newProject("${DEPLOY_NS}")
-              echo "sudah masuk bosss sini "
-              // ...
-              // }
+	      echo "Trying to create project..."
+	      openshift.newProject("${DEPLOY_NS}")
             } catch(e) {
               // The exception is a hudson.AbortException with details
               // about the failure.
+	      echo "Error when creating project"
               echo "Error encountered: ${e}"
             }
 
