@@ -260,17 +260,17 @@ pipeline {
         }
       }
     }
-    stage('Update Jira') {
+    /**stage('Update Jira') {
 
       steps {
         script {
           response = jiraAddComment site: 'MyJenkins',
-          idOrKey: 'MYD-7',
+          idOrKey: "${GIT_BRANCH}",
           comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
         }
 
       }
-    }
+    }**/
 
   }
 }
