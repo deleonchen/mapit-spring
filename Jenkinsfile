@@ -14,6 +14,7 @@ pipeline {
   }
   
   parameters {
+    string(name: 'SERVER_ID', defaultValue: 'jfrod-dl', description: 'Artifactory server definition')
     string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
     string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
   }
@@ -69,6 +70,7 @@ pipeline {
           openshift.withCluster() {
             echo "CUSTOM PARAM 1:[" + params.CUSTOM_PARAM_1 + "]"
 	    echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
+	    echo "SERVER_ID :[" + SERVER_ID + "]"
             echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
             echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
 
