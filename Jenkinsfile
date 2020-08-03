@@ -106,10 +106,10 @@ pipeline {
         //id: "MAVEN_RESOLVER", serverId: "ARTIFACTORY_SERVER", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
 	
 	rtMavenDeployer(
-		id: "MAVEN_DEPLOYER", serverId: ${params.SERVER_ID}, releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
+		id: "MAVEN_DEPLOYER", serverId: "${params.SERVER_ID}", releaseRepo: "libs-release-local", snapshotRepo: "libs-snapshot-local")
 
         rtMavenResolver(
-		id: "MAVEN_RESOLVER", serverId: ${params.SERVER_ID}, releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
+		id: "MAVEN_RESOLVER", serverId: "${params.SERVER_ID}", releaseRepo: "libs-release", snapshotRepo: "libs-snapshot")
       }
     }
 
