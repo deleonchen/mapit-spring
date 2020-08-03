@@ -28,10 +28,11 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
+		
 	  
 	  // echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"   // works - all these methods of referencing the param works
 	  // echo "DEPLOY_NS params: " + params.DEPLOY_NS  // works 
-          echo "DEPLOY_NS : " + "${DEPLOY_NS}"
+          echo "DEPLOY_NS : " + "${params.DEPLOY_NS}"
 
           response = jiraAddComment site: 'MyJenkins',
           idOrKey: "${GIT_BRANCH}",
@@ -155,14 +156,12 @@ pipeline {
           openshift.withCluster() {
 
             try {
-              // openshift.withCredentials('Jenkins01-token') {
-              openshift.newProject("${DEPLOY_NS}")
-              echo "sudah masuk bosss sini "
-              // ...
-              // }
+	      echo "Trying to create project..."
+	      openshift.newProject("${DEPLOY_NS}")
             } catch(e) {
               // The exception is a hudson.AbortException with details
               // about the failure.
+	      echo "Error when creating project"
               echo "Error encountered: ${e}"
             }
 
