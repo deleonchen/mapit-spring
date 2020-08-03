@@ -3,21 +3,22 @@ pipeline {
   agent {
     label 'maven'
   }
+	
+  parameters {
+    string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
+    string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
+  }
   
   environment {
-    DEPLOY_NS = "${env.DEPLOY_NS}"
+    //DEPLOY_NS = "${env.DEPLOY_NS}"
     // GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
-    MY_ORI_GIT = "${env.GIT_BRANCH}"
+    //MY_ORI_GIT = "${env.GIT_BRANCH}"
     // MY_NEW_GIT = MY_ORI_GIT.substring(7)
-    MY_NEW_GIT = 'MYD-7'
+    //MY_NEW_GIT = 'MYD-7'
 
   }
   
-  parameters {
-    string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
-    string(name: 'CUSTOM_PARAM_1', defaultValue: 'abc123', description: 'This is so cacat')
-    string(name: 'CUSTOM_PARAM_2', defaultValue: 'Jenkins is cacat', description: 'Cant believe this stupid hack')
-  }
+
 
   stages {
     stage('Update Jira#0 with GitBranch') {
@@ -34,8 +35,8 @@ pipeline {
 	  // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
           // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
           response = jiraAddComment site: 'MyJenkins',
-          idOrKey: "${MY_NEW_GIT}",
-          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
+          idOrKey: "${GIT_BRANCH}",
+          comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
 
         }
 
@@ -52,7 +53,7 @@ pipeline {
     // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
     //def issue = jiraGetIssue idOrKey: "${MY_NEW_GIT}", site: 'MyJenkins'
     //if (issue.code.toString() == '200') {
-    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL}"
+    //response = jiraAddComment site: 'MyJenkins', idOrKey: "${MY_NEW_GIT}", comment: "Build result: Job - ${JOB_NAME} Build Number = ${BUILD_NUMBER} Build URL - ${BUILD_URL} on OpenShift Namespace ${DEPLOY_NS}"
     //} else {
     //def issueInfo = [fields: [ project: [key: 'MYD'],
     //summary: "Review build ${MY_NEW_GIT} ",
@@ -68,8 +69,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            echo "CUSTOM PARAM 1:[" + params.CUSTOM_PARAM_1 + "]"
-	    echo "DEPLOY_NS :[" + "${env.DEPLOY_NS}" + "]"
+	    echo "DEPLOY_NS :[" + "${DEPLOY_NS}" + "]"
 	    echo "SERVER_ID :[" + params.SERVER_ID + "]"
             echo "Selector Project result :[" + openshift.selector('project', "${DEPLOY_NS}").exists() + "]"
             echo "Selector ns result :[" + openshift.selector('ns', "${DEPLOY_NS}").exists() + "]"
