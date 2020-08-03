@@ -9,14 +9,12 @@ pipeline {
     string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
   }
   
-  environment {
-    // set as env var
-    DEPLOY_NS = "params.SERVER_ID"
+  /**environment {
     //GIT_FALSE_FULL_NAME =  "${env.GIT_BRANCH,fullName=false}"
     //MY_ORI_GIT = "${env.GIT_BRANCH}"
     //MY_NEW_GIT = MY_ORI_GIT.substring(7)
     //MY_NEW_GIT = 'MYD-7'
-  }
+  }**/
   
 
 
@@ -31,7 +29,9 @@ pipeline {
         script {
 
           echo "GIT_BRANCH :" +  "${GIT_BRANCH}"
-	  echo "DEPLOY_NS :" +  "${DEPLOY_NS}"
+	  echo "DEPLOY_NS env:" +  "${env.DEPLOY_NS}"
+	  echo "DEPLOY_NS params: " + params.DEPLOY_NS
+          echo "DEPLOY_NS : " + "${DEPLOY_NS}"
 	  // echo "Env GIT_BRANCH :" +  "${env.GIT_BRANCH}"
 	  // echo "MY_NEW_GIT :" +  "${MY_NEW_GIT}"
           // echo "GIT_FALSE : ${GIT_BRANCH,fullName=false} "
