@@ -7,7 +7,7 @@ pipeline {
   parameters {
     string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
     string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
-    // this is an update for Bug report MYD-19 FIX TEST FOR DEMO
+    // Removed parameter (TARGET_ENV) because unused
   }
   
   /**environment {
