@@ -78,7 +78,10 @@ pipeline {
             echo "CHANGE_TARGET : " + "${env.CHANGE_TARGET}"
 	    echo "GIT_COMMIT : " + "${GIT_COMMIT}"
 
-             env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+            env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+	    
+	    echo "GIT_COMMIT_MSG : " + "${env.GIT_COMMIT_MSG}"
+	    
             //def comments = jiraGetComments idOrKey: "${env.CHANGE_ID}"
             //echo comments.data.toString()
 
