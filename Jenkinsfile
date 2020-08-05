@@ -7,8 +7,8 @@ pipeline {
   parameters {
     string(name: 'SERVER_ID', defaultValue: 'jfrog-dl', description: 'Artifactory server definition')
     string(name: 'DEPLOY_NS', defaultValue: 'mapit-dl-test', description: 'OpenShift namespace')
-    // Added new parameter value for Environment
-    string(name: 'TARGET_ENV', defaultValue: 'DEV', description: 'Target deploy environment')  
+    // Removed parameter (TARGET_ENV) because unused
+
   }
   
   /**environment {
