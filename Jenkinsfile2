@@ -67,7 +67,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-	          echo "DEPLOY_NS :[ ${params.DEPLOY_NS} ]"
+	    echo "DEPLOY_NS :[ ${params.DEPLOY_NS} ]"
             echo "SERVER_ID :[ ${params.SERVER_ID} ]"
             echo "Selector Project result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('project', "${params.DEPLOY_NS}").exists() + "]"
             echo "Selector Namespace result on namespace - ${params.DEPLOY_NS}:[" + openshift.selector('ns', "${params.DEPLOY_NS}").exists() + "]"
@@ -79,8 +79,10 @@ pipeline {
 	    echo "GIT_COMMIT : " + "${GIT_COMMIT}"
 
             env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+	    env.GIT_COMMIT_MSG_TITLE = sh (script: 'git log -1 --pretty=%s ${GIT_COMMIT}', returnStdout: true).trim()
 	    
 	    echo "GIT_COMMIT_MSG : " + "${env.GIT_COMMIT_MSG}"
+	    echo "GIT_COMMIT_MSG_TITLE : " + "${env.GIT_COMMIT_MSG_TITLE}"
 	    
             //def comments = jiraGetComments idOrKey: "${env.CHANGE_ID}"
             //echo comments.data.toString()
